@@ -81,7 +81,7 @@ jobs:
           envs: PROD_ENV_DATA
           script: |
             # 1. Переходим в папку проекта на сервере
-            cd /root/online_shop_project
+            cd /root/Talika_online_store
             
             # 2. Сбрасываем локальные изменения и удаляем файлы, созданные прошлым деплоем (например, старый .env)
             git reset --hard
