@@ -1,0 +1,18 @@
+/* Обнуляем отступы, но не блокируем скролл */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /* Убираем жесткий min-height, давая контенту свободно расти вниз */
+  height: auto;
+  background-color: #000000;
+}
+
+/* Разрешаем вертикальный скролл в любом случае */
+body {
+  overflow-y: auto;
+}
+
+* {
+  box-sizing: border-box;
+}
