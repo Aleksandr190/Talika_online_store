@@ -23,7 +23,7 @@ class ProductListView(generics.ListAPIView):
 
 class SiteSettingsView(APIView):
     def get(self, request):
-        # Берем первую (и единственную) запись. Если базы пустая — создаем дефолтную
+        # Берем первую (и единственную) запись. Если база пустая — создаем дефолтную
         settings, created = SiteSettings.objects.get_or_create(id=1)
         
         logo_url = settings.logo.url if settings.logo else None
@@ -34,6 +34,10 @@ class SiteSettingsView(APIView):
         data = {
             "site_name": settings.site_name,
             "phone": settings.phone,
-            "logo": logo_url
+            "logo": logo_url,
+            "instagram": settings.instagram,
+            "vkontakte": settings.vkontakte,
+            "telegram": settings.telegram,
+            "max_messenger": settings.max_messenger,
         }
         return Response(data)
