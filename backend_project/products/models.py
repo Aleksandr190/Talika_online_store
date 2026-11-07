@@ -25,6 +25,7 @@ class SiteSettings(models.Model):
     site_name = models.CharField(max_length=100, default="Магазин ожерелий", verbose_name="Название магазина")
     phone = models.CharField(max_length=20, default="+X (XXX) XXX-XX-XX", verbose_name="Телефон")
     logo = models.ImageField(upload_to="site_info/", verbose_name="Логотип", blank=True, null=True)
+    catalog_banner = models.ImageField(upload_to="site_info/", verbose_name="Баннер каталога", blank=True, null=True)
 
     # Ссылки на социальные сети и мессенджеры
     instagram = models.URLField(max_length=255, blank=True, null=True, verbose_name="Ссылка на Instagram")

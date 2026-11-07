@@ -31,10 +31,15 @@ class SiteSettingsView(APIView):
         if logo_url and not logo_url.startswith('http'):
             logo_url = request.build_absolute_uri(logo_url)
 
+        banner_url = settings.catalog_banner.url if settings.catalog_banner else None
+        if banner_url and not banner_url.startswith('http'):
+            banner_url = request.build_absolute_uri(banner_url)
+
         data = {
             "site_name": settings.site_name,
             "phone": settings.phone,
             "logo": logo_url,
+            "catalog_banner": banner_url,
             "instagram": settings.instagram,
             "vkontakte": settings.vkontakte,
             "telegram": settings.telegram,
