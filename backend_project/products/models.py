@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Product(models.Model):
@@ -25,6 +26,12 @@ class SiteSettings(models.Model):
     phone = models.CharField(max_length=20, default="+X (XXX) XXX-XX-XX", verbose_name="Телефон")
     logo = models.ImageField(upload_to="site_info/", verbose_name="Логотип", blank=True, null=True)
 
+    # Ссылки на социальные сети и мессенджеры
+    instagram = models.URLField(max_length=255, blank=True, null=True, verbose_name="Ссылка на Instagram")
+    vkontakte = models.URLField(max_length=255, blank=True, null=True, verbose_name="Ссылка на ВКонтакте")
+    telegram = models.URLField(max_length=255, blank=True, null=True, verbose_name="Ссылка на Telegram")
+    max_messenger = models.URLField(max_length=255, blank=True, null=True, verbose_name="Ссылка на мессенджер MAX")
+
     class Meta:
         verbose_name = "Настройки сайта"
         verbose_name_plural = "Настройки сайта"
@@ -32,7 +39,7 @@ class SiteSettings(models.Model):
     def save(self, *args, **kwargs):
         # Если запись уже есть, запрещаем создавать новую, а обновляем текущую
         if not self.pk and SiteSettings.objects.exists():
-            return
+            raise ValidationError("Вы не можете создать более одной записи настроек сайта.")
         super().save(*args, **kwargs)
 
     def __str__(self):
