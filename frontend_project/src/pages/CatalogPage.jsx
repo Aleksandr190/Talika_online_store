@@ -4,6 +4,7 @@ import { ProductCard } from '../components/ProductCard';
 
 export const CatalogPage = ({ filters, catalogRef }) => {
   const [products, setProducts] = useState([]);
+  const [settings, setSettings] = useState({ catalog_banner: null });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,21 +16,29 @@ export const CatalogPage = ({ filters, catalogRef }) => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
 
-    const fetchProducts = async () => {
+     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('/api/products/');
-        setProducts(response.data);
+
+        // Загружаем данные параллельно
+        const [productsResponse, settingsResponse] = await Promise.all([
+          axios.get('/api/products/'),
+          axios.get('/api/settings/')
+        ]);
+
+        // ИСПРАВЛЕНО: используем правильные переменные из Promise.all
+        setProducts(productsResponse.data);
+        setSettings(settingsResponse.data);
         setError(null);
       } catch (err) {
-        console.error("Ошибка при получении товаров:", err);
-        setError("Не удалось загрузить товары. Проверьте, запущен ли бэкенд.");
+        console.error("Ошибка при получении данных витрины:", err);
+        setError("Не удалось загрузить данные. Проверьте, запущен ли бэкенд.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchData();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -53,6 +62,21 @@ export const CatalogPage = ({ filters, catalogRef }) => {
       }}
       ref={catalogRef}
     >
+        {/* Вывод картинки-баннера из админки (рендерится только если она загружена) */}
+        {settings.catalog_banner && (
+        <div style={styles.bannerWrapper}>
+          <img
+            src={settings.catalog_banner}
+            alt="Промо баннер коллекции"
+            style={{
+              ...styles.bannerImage,
+              // ИСПРАВЛЕНО: На телефоне жестко держим высоту 200px,
+              // бока будут автоматически срезаться при сужении экрана, показывая ЦЕНТР.
+              height: isMobile ? '250px' : '600px',
+            }}
+          />
+        </div>
+      )}
 
       {/* Показываем плашку с активным фильтром над сеткой */}
       {filters.gender !== 'Все' && (
@@ -82,6 +106,21 @@ const styles = {
     paddingLeft: '15px',
     paddingRight: '15px',
     boxSizing: 'border-box',
+  },
+  bannerWrapper: {
+    width: '100%',
+    marginBottom: '25px',
+    borderRadius: '4px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+  },
+  bannerImage: {
+    width: '100%',
+    // objectFit и objectPosition заставят картинку вести себя как background-image:
+    // она зафиксируется по центру, а края будут уходить за экран при уменьшении ширины
+    objectFit: 'cover',
+    objectPosition: 'center',
+    display: 'block',
   },
   grid: {
     display: 'grid',
