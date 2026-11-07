@@ -1,9 +1,46 @@
 import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 
+
+// Иконка ВКонтакте
+const VkIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://w3.org">
+    <path d="M23.45 5.92c.16-.54 0-.94-.77-.94h-2.55c-.65 0-.94.34-1.1.72 0 0-1.3 3.16-3.14 5.22-.6.6-.87.79-1.2.79-.16 0-.4-.19-.4-.73V5.92c0-.65-.19-.94-.75-.94H9.43c-.4 0-.66.3-.66.58 0 .61.92.75 1.01 2.47v3.71c0 .81-.15.96-.47.96-.87 0-3-.3.17-4.32-4.33-5.06-5.04-5.22-5.69-5.22H.76C.03 5.16-.1 5.5-.1 5.92c0 .7.9 4.2 4.2 8.81 2.2 3.16 5.3 4.87 8.1 4.87 1.7 0 1.9-.38 1.9-1.04v-2.28c0-.73.15-.88.67-.88.38 0 1.03.19 2.55 1.66 1.73 1.73 2.02 2.53 2.99 2.53h2.55c.73 0 1.09-.37.88-1.09-.23-.72-1.06-1.77-2.16-3.02-.6-.71-1.5-1.48-1.78-1.87-.38-.49-.27-.7 0-1.14 0 0 3.09-4.36 3.41-5.84z"/>
+  </svg>
+);
+
+// Иконка Telegram
+const TelegramIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://w3.org">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 12 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.94-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+  </svg>
+);
+
+// Иконка Instagram
+const InstagramIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://w3.org">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+  </svg>
+);
+
+// Иконка Мессенджера MAX
+const MaxIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://w3.org">
+    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12c0 2.15.68 4.15 1.83 5.8L2.1 21.4c-.2.46.22.94.7.77l3.85-1.37c1.6.8 3.42 1.23 5.35 1.23 5.52 0 10-4.48 10-10S17.52 2 12 2zm0 6.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>
+  </svg>
+);
+
 export const Header = ({ filters, onFilterChange, catalogRef }) => {
 
-  const [settings, setSettings] = useState({ site_name: 'Талика', phone: '', logo: null });
+  const [settings, setSettings] = useState({ site_name: 'Талика',
+    phone: '',
+    logo: null,
+    instagram: null,
+    vkontakte: null,
+    telegram: null,
+    max_messenger: null });
   const [loading, setLoading] = useState(true);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -66,8 +103,17 @@ export const Header = ({ filters, onFilterChange, catalogRef }) => {
     <header style={styles.header}>
       <div style={styles.container}>
 
+         {/* СЕКЦИЯ ЛОГОТИПА (Загружается из картинки бэкенда) */}
         <div style={styles.logoSection}>
-          <span style={styles.brandName}>{settings.site_name}</span>
+          {settings.logo ? (
+            <img
+              src={settings.logo}
+              alt={settings.site_name}
+              style={styles.logoImage}
+            />
+          ) : (
+            <span style={styles.brandName}>{settings.site_name}</span>
+          )}
         </div>
 
         <nav style={styles.navSection}>
@@ -142,10 +188,28 @@ export const Header = ({ filters, onFilterChange, catalogRef }) => {
               {settings.phone}
             </a>
           )}
-          <div style={styles.socials}>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" style={styles.socialLink}>IG</a>
-            <a href="https://telegram.org" target="_blank" rel="noreferrer" style={styles.socialLink}>TG</a>
-          </div>
+         <div style={styles.socials}>
+  {settings.vkontakte && (
+    <a href={settings.vkontakte} target="_blank" rel="noreferrer" style={styles.socialLink} title="ВКонтакте">
+      <VkIcon />
+    </a>
+  )}
+  {settings.telegram && (
+    <a href={settings.telegram} target="_blank" rel="noreferrer" style={styles.socialLink} title="Telegram">
+      <TelegramIcon />
+    </a>
+  )}
+  {settings.max_messenger && (
+    <a href={settings.max_messenger} target="_blank" rel="noreferrer" style={styles.socialLink} title="Мессенджер MAX">
+      <MaxIcon />
+    </a>
+  )}
+  {settings.instagram && (
+    <a href={settings.instagram} target="_blank" rel="noreferrer" style={styles.socialLink} title="Instagram">
+      <InstagramIcon />
+    </a>
+  )}
+</div>
         </div>
 
       </div>
@@ -214,7 +278,29 @@ const styles = {
   submenuBtnActive: { color: '#D4AF37', fontWeight: 'bold' },
   resetBtn: { color: '#888888' },
   contactsSection: { display: 'flex', alignItems: 'center', gap: '20px', flex: '1 1 auto', justifyContent: 'flex-end', flexWrap: 'wrap' },
-  phone: { color: '#D4AF37', textDecoration: 'none', fontSize: '16px', fontWeight: '500', transition: 'opacity 0.2s' },
+  phone: { color: '#ffffff', textDecoration: 'none', fontSize: '16px', fontWeight: '500', transition: 'opacity 0.2s' },
   socials: { display: 'flex', gap: '12px' },
-  socialLink: { color: '#ffffff', border: '1px solid rgba(212, 175, 55, 0.4)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', textDecoration: 'none', transition: 'all 0.2s ease' }
+socialLink: {
+    color: '#ffffff', // Иконки станут благородного золотого цвета
+    textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s ease',
+    opacity: 0.8,
+    // Убираем рамки, чтобы иконки выглядели минималистично и премиально
+  },
+    logoSection: {
+    display: 'flex',
+    alignItems: 'center',
+    flex: '1 1 auto',
+    minWidth: '100px'
+  },
+  logoImage: {
+    height: '60px',       // Ограничиваем картинку по высоте, чтобы она не растягивала шапку
+    width: 'auto',        // Пропорции ширины сохраняются автоматически
+    display: 'block',
+    objectFit: 'contain', // Картинка не деформируется
+  },
+
 };
